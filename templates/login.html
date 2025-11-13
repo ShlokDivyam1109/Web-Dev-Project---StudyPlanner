@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login - Study Planner</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    .auth-container {
+      max-width: 400px;
+      margin: 5% auto;
+      padding: 30px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .auth-container h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 25px;
+    }
+    .auth-container input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .auth-container button[type="submit"] {
+      width: 100%;
+      padding: 12px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .auth-container button[type="submit"]:hover {
+      background: #5568d3;
+    }
+    .forgot-password {
+      text-align: center;
+      margin-top: 15px;
+    }
+    .forgot-password a {
+      color: #667eea;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .forgot-password a:hover {
+      text-decoration: underline;
+    }
+    .auth-link {
+      text-align: center;
+      margin-top: 20px;
+      color: #666;
+    }
+    .auth-link button {
+      background: transparent;
+      color: #667eea;
+      border: 2px solid #667eea;
+      cursor: pointer;
+      font-weight: bold;
+      padding: 8px 16px;
+      margin-top: 10px;
+    }
+    .auth-link button:hover {
+      background: #667eea;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <h2>Login</h2>
+    <form method="POST">
+      <input type="email" name="email_id" placeholder="Email ID" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+      <div class="forgot-password">
+        <a href="/forgot">Forgot Password?</a>
+      </div>
+    </form>
+    <div class="auth-link">
+      Don't have an account? <br>
+      <a href="/signup"><button type="button">Sign Up</button></a>
+    </div>
+  </div>
+</body>
+</html>
+

@@ -1,0 +1,12 @@
+Flask==3.0.0
+flask-mysqldb==1.1.0
+flask-mail==0.9.1
+itsdangerous==2.1.2
+mysql-connector-python==8.2.0
+dash==2.14.1
+plotly==5.17.0
+pandas==2.1.1
+requests==2.31.0
+bcrypt==4.1.1
+Werkzeug==3.0.1
+click==8.1.7

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sign Up - Study Planner</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <style>
+    .auth-container {
+      max-width: 400px;
+      margin: 5% auto;
+      padding: 30px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .auth-container h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 25px;
+    }
+    .auth-container input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .auth-container button {
+      width: 100%;
+      padding: 12px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .auth-container button:hover {
+      background: #5568d3;
+    }
+    .auth-link {
+      text-align: center;
+      margin-top: 20px;
+      color: #666;
+    }
+    .auth-link button {
+      background: transparent;
+      color: #667eea;
+      border: 2px solid #667eea;
+      cursor: pointer;
+      font-weight: bold;
+      padding: 8px 16px;
+      margin-top: 10px;
+    }
+    .auth-link button:hover {
+      background: #667eea;
+      color: white;
+    }
+  </style>
+  <div class="auth-container">
+    <h2>Create an Account</h2>
+    <form method="POST">
+      <input type="text" name="first_name" placeholder="First Name" required>
+      <input type="text" name="last_name" placeholder="Last Name (optional)">
+      <input type="email" name="email_id" placeholder="Email ID" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <input type="password" name="retype_password" placeholder="Retype Password" required>
+      <button type="submit">Sign Up</button>
+    </form>
+    <div class="auth-link">
+      Already have an account? <br>
+      <a href="/login"><button type="button">Log In</button></a>
+    </div>
+  </div>
+</body>
+</html>
+

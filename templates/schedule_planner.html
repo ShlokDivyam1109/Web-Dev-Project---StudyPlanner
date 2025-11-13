@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Schedule Your Study - Study Planner{% endblock %}
+
+{% block extra_styles %}
+    <style>
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333;
+      }
+      input[type="text"],
+      input[type="date"],
+      select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 1em;
+      }
+      input[type="text"]:focus,
+      input[type="date"]:focus,
+      select:focus {
+        border-color: #667eea;
+        outline: none;
+        box-shadow: 0 0 5px rgba(102, 126, 234, 0.2);
+      }
+      .checkbox-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 10px;
+      }
+      .checkbox-item {
+        display: flex;
+        align-items: center;
+      }
+      input[type="checkbox"] {
+        margin-right: 8px;
+        cursor: pointer;
+      }
+      .info-box {
+        background-color: #e7f3ff;
+        padding: 15px;
+        border-left: 4px solid #667eea;
+        margin-bottom: 20px;
+        border-radius: 4px;
+      }
+      .form-container {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+      }
+      button {
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: bold;
+      }
+      button:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      }
+    </style>
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Schedule Your Study Plan</h1>
+    <p>Create a personalized study schedule based on your subjects and goals.</p>
+  </div>
+
+  <div class="form-container">
+    <div class="info-box">
+      <p><strong>Step 1:</strong> Create a new study plan by entering the plan details, start/end dates, and preferred study days.</p>
+    </div>
+
+    <form method="POST">
+      <div class="form-group">
+        <label for="plan_name">Plan Name:</label>
+        <input type="text" id="plan_name" name="plan_name" placeholder="e.g., JEE Mains Prep" value="My Study Plan">
+      </div>
+
+      <div class="form-group">
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" required>
+      </div>
+
+      <div class="form-group">
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" required>
+      </div>
+
+      <div class="form-group">
+        <label>Preferred Study Days per Week:</label>
+        <div class="checkbox-group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="mon" name="preferred_days" value="Mon">
+            <label for="mon" style="margin-bottom: 0;">Monday</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="tue" name="preferred_days" value="Tue">
+            <label for="tue" style="margin-bottom: 0;">Tuesday</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="wed" name="preferred_days" value="Wed">
+            <label for="wed" style="margin-bottom: 0;">Wednesday</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="thu" name="preferred_days" value="Thu">
+            <label for="thu" style="margin-bottom: 0;">Thursday</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="fri" name="preferred_days" value="Fri">
+            <label for="fri" style="margin-bottom: 0;">Friday</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="sat" name="preferred_days" value="Sat">
+            <label for="sat" style="margin-bottom: 0;">Saturday</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="sun" name="preferred_days" value="Sun">
+            <label for="sun" style="margin-bottom: 0;">Sunday</label>
+          </div>
+        </div>
+      </div>
+
+      <input type="hidden" name="preferred_days" value="">
+      <button type="submit">Next: Add Subjects & Topics</button>
+    </form>
+
+    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd;">
+      <a href="/dashboard" style="color: #667eea; text-decoration: none; font-weight: bold;">← Back to Dashboard</a>
+    </div>
+  </div>
+
+  <script>
+    // Collect selected days and combine into comma-separated string
+    document.querySelector('form').addEventListener('submit', function() {
+      const days = [];
+      document.querySelectorAll('input[name="preferred_days"]:checked').forEach(checkbox => {
+        days.push(checkbox.value);
+      });
+      // Create a hidden input to store the combined value
+      const hiddenInput = document.createElement('input');
+      hiddenInput.type = 'hidden';
+      hiddenInput.name = 'preferred_days';
+      hiddenInput.value = days.join(',');
+      // Remove the old checkboxes' names and add the hidden input
+      document.querySelectorAll('input[name="preferred_days"]').forEach(cb => {
+        cb.name = '';
+      });
+      this.appendChild(hiddenInput);
+    });
+  </script>
+{% endblock %}
