@@ -12,7 +12,7 @@ import requests
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
 
-# Initialize mail (use environment variables for sensitive data)
+# Initialize mail
 mail = Mail()
 def configure_mail(app):
     app.config.update(

@@ -2,6 +2,8 @@
 
 A modern, feature-rich study planning application built with Flask and MySQL that helps students organize their studies, generate personalized schedules using AI, and track daily progress.
 
+> ⚠️ **Important**: This application requires environment variables for email and AI services. See [Configuration](#installation) section for setup instructions. Refer to **ENV_VARIABLES_GUIDE.md** for detailed environment variable configuration.
+
 ## Features
 
 ### Authentication & Security
@@ -107,19 +109,31 @@ python3 init_db.py
 ```
 This creates all necessary tables (User_Data, Study_Plans, Study_Subjects, Study_Topics, Study_Schedule, Daily_Progress, Account_Changes).
 
-6. **Configure Email Service**
-Edit `app.py` and update the SendGrid API key:
-```python
-MAIL_PASSWORD='your_sendgrid_api_key'
-```
+6. **Configure Environment Variables**
+Set the following environment variables before running the app:
 
-7. **Configure Gemini API**
-Set your Google Gemini API key as an environment variable or in `app.py`:
 ```bash
+export SENDGRID_API_KEY='your_sendgrid_api_key'
+export MAIL_SENDER='your_email@example.com'
 export GEMINI_API_KEY='your_gemini_api_key'
+export FLASK_SECRET_KEY='your_secret_key'
 ```
 
-8. **Run the Application**
+Or create a `.env` file in the project root:
+```
+SENDGRID_API_KEY=your_sendgrid_api_key
+MAIL_SENDER=your_email@example.com
+GEMINI_API_KEY=your_gemini_api_key
+FLASK_SECRET_KEY=your_secret_key
+```
+
+**Important**: `MAIL_PASSWORD` and `MAIL_DEFAULT_SENDER` in `app.py` use these environment variables:
+- `MAIL_PASSWORD` uses `SENDGRID_API_KEY` environment variable
+- `MAIL_DEFAULT_SENDER` uses `MAIL_SENDER` environment variable
+
+If these environment variables are not set, the app will use fallback values (not recommended for production).
+
+7. **Run the Application**
 ```bash
 python3 app.py
 ```
