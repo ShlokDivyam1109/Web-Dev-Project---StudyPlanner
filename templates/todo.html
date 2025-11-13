@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+
+{% block title %}To Do List - Study Planner{% endblock %}
+
+{% block extra_styles %}
+    <style>
+      .todo-container {
+        max-width: 900px;
+      }
+      
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+      
+      .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        border-top: 4px solid #667eea;
+      }
+      
+      .stat-card.completed {
+        border-top-color: #28a745;
+      }
+      
+      .stat-card.pending {
+        border-top-color: #ffc107;
+      }
+      
+      .stat-card.skipped {
+        border-top-color: #6c757d;
+      }
+      
+      .stat-card .number {
+        font-size: 32px;
+        font-weight: bold;
+        color: #667eea;
+        margin: 10px 0;
+      }
+      
+      .stat-card.completed .number {
+        color: #28a745;
+      }
+      
+      .stat-card.pending .number {
+        color: #ffc107;
+      }
+      
+      .stat-card.skipped .number {
+        color: #6c757d;
+      }
+      
+      .stat-card .label {
+        color: #7f8c8d;
+        font-size: 14px;
+      }
+      
+      .progress-bar {
+        width: 100%;
+        height: 30px;
+        background: #e9ecef;
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 30px;
+      }
+      
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 12px;
+        transition: width 0.3s;
+      }
+      
+      .topics-list {
+        display: grid;
+        gap: 15px;
+      }
+      
+      .topic-item {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        transition: all 0.3s;
+        border-left: 4px solid #667eea;
+      }
+      
+      .topic-item.completed {
+        border-left-color: #28a745;
+        background: #f8f9fa;
+      }
+      
+      .topic-item.completed .topic-name {
+        text-decoration: line-through;
+        color: #7f8c8d;
+      }
+      
+      .topic-item.skipped {
+        border-left-color: #6c757d;
+        background: #f8f9fa;
+      }
+      
+      .topic-item.skipped .topic-name {
+        color: #7f8c8d;
+      }
+      
+      .topic-checkbox {
+        flex-shrink: 0;
+      }
+      
+      .topic-checkbox input[type="checkbox"] {
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+      }
+      
+      .topic-info {
+        flex: 1;
+      }
+      
+      .topic-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 5px;
+      }
+      
+      .topic-subject {
+        display: inline-block;
+        background: #f0f4ff;
+        color: #667eea;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-right: 10px;
+      }
+      
+      .topic-weightage {
+        display: inline-block;
+        background: #ffeaa7;
+        color: #d63031;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      
+      .topic-actions {
+        display: flex;
+        gap: 10px;
+        flex-shrink: 0;
+      }
+      
+      .topic-actions button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
+      
+      .btn-done {
+        background: #28a745;
+        color: white;
+      }
+      
+      .btn-done:hover {
+        background: #218838;
+      }
+      
+      .btn-skip {
+        background: #6c757d;
+        color: white;
+      }
+      
+      .btn-skip:hover {
+        background: #5a6268;
+      }
+      
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #7f8c8d;
+      }
+      
+      .empty-state .icon {
+        font-size: 60px;
+        margin-bottom: 20px;
+      }
+      
+      .empty-state h2 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+      }
+      
+      .empty-state p {
+        font-size: 16px;
+        margin: 10px 0;
+      }
+    </style>
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Today's Study Plan</h1>
+    <p>{{ today_date }} - Complete your assigned topics for today</p>
+  </div>
+
+  <div class="todo-container">
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="label">Total Topics</div>
+        <div class="number">{{ total_topics }}</div>
+      </div>
+      <div class="stat-card completed">
+        <div class="label">✅ Completed</div>
+        <div class="number">{{ completed_topics }}</div>
+      </div>
+      <div class="stat-card pending">
+        <div class="label">⏳ Pending</div>
+        <div class="number">{{ pending_topics }}</div>
+      </div>
+      <div class="stat-card skipped">
+        <div class="label">⏭️ Skipped</div>
+        <div class="number">{{ skipped_topics }}</div>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    {% if total_topics > 0 %}
+    <div class="progress-bar">
+      <div class="progress-fill" style="width: {{ completion_pct }}%;">
+        {{ completion_pct }}% Complete
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Topics List -->
+    {% if today_topics %}
+    <div class="topics-list">
+      {% for topic in today_topics %}
+      <div class="topic-item {{ topic.status }}">
+        <div class="topic-info">
+          <div class="topic-name">{{ topic.topic }}</div>
+          <div>
+            <span class="topic-subject">📚 {{ topic.subject }}</span>
+            <span class="topic-weightage">Weightage: {{ topic.weightage }}%</span>
+          </div>
+        </div>
+        <div class="topic-actions">
+          {% if topic.status == 'completed' %}
+            <span style="color: #28a745; font-weight: bold;">✓ Done</span>
+          {% elif topic.status == 'skipped' %}
+            <span style="color: #6c757d; font-weight: bold;">- Skipped</span>
+          {% else %}
+            <form method="POST" style="display: inline;">
+              <input type="hidden" name="action" value="mark_done">
+              <input type="hidden" name="topic_id" value="{{ topic.id }}">
+              <button type="submit" class="btn-done">Mark Done</button>
+            </form>
+            <form method="POST" style="display: inline;">
+              <input type="hidden" name="action" value="skip">
+              <input type="hidden" name="topic_id" value="{{ topic.id }}">
+              <button type="submit" class="btn-skip">Skip</button>
+            </form>
+            {% if topic.plan_id %}
+            <a href="/edit_plan/{{ topic.plan_id }}" style="display:inline-block; margin-left:8px; text-decoration:none;"><button class="btn-skip" type="button">Edit Plan</button></a>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="icon">📭</div>
+      <h2>No Topics Assigned Today</h2>
+      <p>You don't have any topics scheduled for today.</p>
+      <p style="color: #999; font-size: 14px; margin-top: 20px;">
+        Create a study plan and generate a schedule to see your daily topics here.
+      </p>
+      <a href="/schedule" style="color: #667eea; text-decoration: none; font-weight: bold; margin-top: 20px; display: inline-block;">
+        ➜ Create Study Plan
+      </a>
+    </div>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Add Subjects & Topics - Study Planner{% endblock %}
+
+{% block extra_styles %}
+    <style>
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333;
+      }
+      input[type="text"],
+      input[type="number"],
+      select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 1em;
+        box-sizing: border-box;
+      }
+      input:focus,
+      select:focus {
+        border-color: #667eea;
+        outline: none;
+        box-shadow: 0 0 5px rgba(102, 126, 234, 0.2);
+      }
+      .info-box {
+        background-color: #e7f3ff;
+        padding: 15px;
+        border-left: 4px solid #667eea;
+        margin-bottom: 20px;
+        border-radius: 4px;
+      }
+      .plan-summary {
+        background-color: #f0f0f0;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        font-size: 0.95em;
+      }
+      .plan-summary p {
+        margin: 5px 0;
+      }
+      .subjects-list {
+        margin-top: 20px;
+      }
+      .subject-card {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+      .subject-card h4 {
+        margin-top: 0;
+        color: #667eea;
+      }
+      .topic-item {
+        background-color: #f9f9f9;
+        padding: 10px;
+        margin: 8px 0;
+        border-left: 3px solid #28a745;
+        border-radius: 3px;
+      }
+      .add-section {
+        background-color: #e8f5e9;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+      }
+      .add-section h4 {
+        margin-top: 0;
+        color: #28a745;
+      }
+      .button-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+      }
+      .button-group button {
+        flex: 1;
+      }
+      button {
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: bold;
+      }
+      button:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      }
+      button.secondary {
+        background-color: #6c757d;
+        background: #6c757d;
+      }
+      button.secondary:hover {
+        background-color: #5a6268;
+      }
+    </style>
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>📖 Add Subjects & Topics</h1>
+    <p>Add the subjects and topics you want to study with their weightages.</p>
+  </div>
+
+  <div class="info-box">
+    <p><strong>Step 2:</strong> Add subjects and their topics with weightages. You can add multiple subjects and topics.</p>
+  </div>
+
+  <!-- Plan Summary -->
+  {% if plan %}
+  <div class="plan-summary">
+    <p><strong>Plan:</strong> {{ plan[0] }}</p>
+    <p><strong>Period:</strong> {{ plan[1] }} to {{ plan[2] }}</p>
+    <p><strong>Study Days:</strong> {{ plan[3] if plan[3] else 'All days' }}</p>
+  </div>
+  {% endif %}
+
+  <!-- Add Subject Section -->
+  <div class="add-section">
+    <h4>➕ Add a New Subject</h4>
+    <form method="POST">
+      <input type="hidden" name="plan_id" value="{{ plan_id }}">
+      <input type="hidden" name="action" value="add_subject">
+      
+      <div class="form-group">
+        <label for="subject_name">Subject Name:</label>
+        <input type="text" id="subject_name" name="subject_name" placeholder="e.g., Mathematics" required>
+      </div>
+      
+      <button type="submit">Add Subject</button>
+    </form>
+  </div>
+
+  <!-- Display Subjects and Topics -->
+  {% if subjects %}
+  <div class="subjects-list">
+    <h3>Current Subjects & Topics</h3>
+    
+    {% for subject in subjects %}
+    <div class="subject-card">
+      <h4>{{ subject.name }}</h4>
+      
+      {% if subject.topics %}
+        <p><strong>Topics:</strong></p>
+        {% for topic in subject.topics %}
+        <div class="topic-item">
+          <strong>{{ topic.name }}</strong> (Weightage: {{ topic.weightage }})
+        </div>
+        {% endfor %}
+      {% else %}
+        <p><em>No topics added yet</em></p>
+      {% endif %}
+
+      <!-- Add Topic Form -->
+      <form method="POST" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;">
+        <input type="hidden" name="plan_id" value="{{ plan_id }}">
+        <input type="hidden" name="action" value="add_topic">
+        <input type="hidden" name="subject_id" value="{{ subject.id }}">
+        
+        <div class="form-group">
+          <label for="topic_name_{{ subject.id }}">Topic Name:</label>
+          <input type="text" id="topic_name_{{ subject.id }}" name="topic_name" placeholder="e.g., Calculus" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="weightage_{{ subject.id }}">Initial Weightage (0-100):</label>
+          <input type="number" id="weightage_{{ subject.id }}" name="initial_weightage" min="0" step="0.1" placeholder="0" value="0">
+        </div>
+        
+        <button type="submit">Add Topic to {{ subject.name }}</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p style="text-align: center; color: #999;">No subjects added yet. Add one using the form above.</p>
+  {% endif %}
+
+  <!-- Submit Plan -->
+  <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #ddd;">
+    <form method="POST">
+      <input type="hidden" name="plan_id" value="{{ plan_id }}">
+      <input type="hidden" name="action" value="submit_plan">
+      
+      <div class="button-group">
+        <button type="submit">✅ Generate Schedule</button>
+        <button type="button" class="secondary" onclick="window.location.href='/dashboard'">← Cancel</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

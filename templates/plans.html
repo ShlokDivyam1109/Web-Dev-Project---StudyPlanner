@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}My Study Plans - Study Planner{% endblock %}
+
+{% block extra_styles %}
+    <style>
+      .plans-container {
+        max-width: 1000px;
+      }
+      .plan-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        padding: 20px;
+        border-left: 4px solid #667eea;
+      }
+      .plan-card.submitted {
+        border-left-color: #28a745;
+      }
+      .plan-card h3 {
+        margin-top: 0;
+        color: #2c3e50;
+      }
+      .plan-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        margin: 15px 0;
+        font-size: 14px;
+      }
+      .meta-item {
+        background: #f9f9f9;
+        padding: 10px 12px;
+        border-radius: 6px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .meta-item .label {
+        color: #7f8c8d;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: none;
+        margin-right: 12px;
+      }
+      .meta-item .value {
+        color: #2c3e50;
+        font-weight: 700;
+        text-align: right;
+      }
+      .status-badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 16px;
+        font-size: 12px;
+        font-weight: 700;
+        margin-top: 10px;
+      }
+      .status-badge.draft {
+        background: #ffc107;
+        color: #000;
+      }
+      .status-badge.submitted {
+        background: #28a745;
+        color: white;
+      }
+      .subjects-list {
+        margin-top: 15px;
+      }
+      .subjects-list strong {
+        display: block;
+        margin-bottom: 8px;
+        color: #2c3e50;
+      }
+      .subject-item {
+        background: #f0f4ff;
+        padding: 8px 12px;
+        border-radius: 4px;
+        margin-bottom: 5px;
+        font-size: 14px;
+      }
+      .schedule-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        font-size: 13px;
+      }
+      .schedule-table th {
+        background: #667eea;
+        color: white;
+        padding: 10px;
+        text-align: left;
+        border-radius: 4px 4px 0 0;
+      }
+      .schedule-table td {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+      }
+      .schedule-table tr:last-child td {
+        border-bottom: none;
+      }
+      .schedule-table tbody tr:hover {
+        background: #f9f9f9;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #7f8c8d;
+      }
+      .action-btn {
+        display: inline-block;
+        padding: 6px 10px;
+        background: #667eea;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 13px;
+        margin-top: 10px;
+        transition: background 0.3s;
+        font-weight: 600;
+      }
+      .action-btn:hover {
+        background: #764ba2;
+      }
+    </style>
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>My Study Plans</h1>
+    <p>View and manage your study plans and generated schedules.</p>
+  </div>
+
+  <div class="plans-container">
+    {% if plans %}
+      {% for plan in plans %}
+      <div class="plan-card {% if plan.status == 'submitted' %}submitted{% endif %}">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+          <div>
+            <h3>{{ plan.name }}</h3>
+            <div class="status-badge {{ plan.status }}">
+              {% if plan.status == 'draft' %}Draft{% else %}Submitted{% endif %}
+            </div>
+          </div>
+          <small style="color: #7f8c8d;">Created: {{ plan.created_at }}</small>
+        </div>
+
+        <div class="plan-meta">
+          <div class="meta-item">
+            <div class="label">Start Date</div>
+            <div class="value">{{ plan.start_date }}</div>
+          </div>
+          <div class="meta-item">
+            <div class="label">End Date</div>
+            <div class="value">{{ plan.end_date }}</div>
+          </div>
+          <div class="meta-item">
+            <div class="label">Study Days</div>
+            <div class="value">{{ plan.preferred_days if plan.preferred_days else 'All Days' }}</div>
+          </div>
+          <div class="meta-item">
+            <div class="label">Subjects</div>
+            <div class="value">{{ plan.subjects|length }}</div>
+          </div>
+        </div>
+
+        <!-- Subjects -->
+        {% if plan.subjects %}
+        <div class="subjects-list">
+          <strong>Subjects:</strong>
+          {% for subject in plan.subjects %}
+          <div class="subject-item">{{ subject.name }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Schedule Table -->
+        {% if plan.schedule %}
+        <div style="margin-top: 20px;">
+          <strong style="display: block; margin-bottom: 10px;">Generated Schedule:</strong>
+          <table class="schedule-table">
+            <thead>
+              <tr>
+                <th>Subject</th>
+                <th>Topic</th>
+                <th>From Date</th>
+                <th>To Date</th>
+                <th>Weightage</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for entry in plan.schedule %}
+              <tr>
+                <td><strong>{{ entry.subject }}</strong></td>
+                <td>{{ entry.topic }}</td>
+                <td>{{ entry.from_date }}</td>
+                <td>{{ entry.to_date }}</td>
+                <td>{{ entry.weightage }}%</td>
+                <td>
+                  {% if entry.status == 'scheduled' %}
+                    <span style="background: #d4edda; padding: 4px 8px; border-radius: 3px; font-size: 12px;">Scheduled</span>
+                  {% else %}
+                    <span style="background: #fff3cd; padding: 4px 8px; border-radius: 3px; font-size: 12px;">{{ entry.status }}</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+          <p style="color: #7f8c8d; font-size: 14px; margin-top: 10px;">No schedule generated yet (Plan is in draft status)</p>
+        {% endif %}
+
+  <a href="/edit_plan/{{ plan.id }}" class="action-btn">← Edit Plan</a>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <h2>No Study Plans Yet</h2>
+        <p>You haven't created any study plans yet.</p>
+        <a href="/schedule" style="display: inline-block; padding: 12px 24px; background: #667eea; color: white; text-decoration: none; border-radius: 6px; margin-top: 20px; font-weight: bold;">Create Your First Plan</a>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

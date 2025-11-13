@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block title %}Account - Study Planner{% endblock %}
+
+{% block extra_styles %}
+    <style>
+      .account-container {
+        max-width: 600px;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #333;
+      }
+      input[type="text"],
+      input[type="email"],
+      input[type="password"],
+      select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 1em;
+        box-sizing: border-box;
+      }
+      input:focus,
+      select:focus {
+        border-color: #667eea;
+        outline: none;
+        box-shadow: 0 0 5px rgba(102, 126, 234, 0.2);
+      }
+      .info-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+      .info-card h3 {
+        margin-top: 0;
+        color: #2c3e50;
+        border-bottom: 2px solid #667eea;
+        padding-bottom: 10px;
+      }
+      .info-item {
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .info-item .label {
+        font-size: 12px;
+        color: #7f8c8d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .info-item .value {
+        font-size: 16px;
+        color: #2c3e50;
+        font-weight: 500;
+        margin-top: 0;
+      }
+      .edit-section {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+      .edit-section h3 {
+        margin-top: 0;
+        color: #2c3e50;
+        border-bottom: 2px solid #667eea;
+        padding-bottom: 10px;
+      }
+      button {
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: bold;
+      }
+      button:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      }
+      .message {
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        font-weight: 500;
+      }
+      .message.success {
+        background: #d4edda;
+        border-left: 4px solid #28a745;
+        color: #155724;
+      }
+      .message.error {
+        background: #f8d7da;
+        border-left: 4px solid #e74c3c;
+        color: #721c24;
+      }
+      .message.info {
+        background: #d1ecf1;
+        border-left: 4px solid #17a2b8;
+        color: #0c5460;
+      }
+    </style>
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Account Settings</h1>
+    <p>Manage your profile information and account settings.</p>
+  </div>
+  <div style="text-align: right; margin-bottom: 12px;">
+    <button id="dark-toggle-account" class="btn small">Toggle Theme</button>
+  </div>
+
+  <div class="account-container">
+    {% if message %}
+      {% if '✅' in message %}
+        <div class="message success">{{ message }}</div>
+      {% elif '⚠️' in message %}
+        <div class="message error">{{ message }}</div>
+      {% else %}
+        <div class="message info">{{ message }}</div>
+      {% endif %}
+    {% endif %}
+
+    <!-- Current Account Information -->
+    {% if user_data %}
+    <div class="info-card">
+      <h3>📋 Account Information</h3>
+      
+      <div class="info-item">
+        <div class="label">First Name</div>
+        <div class="value">{{ user_data[0] }}</div>
+      </div>
+      
+      {% if user_data[1] %}
+      <div class="info-item">
+        <div class="label">Last Name</div>
+        <div class="value">{{ user_data[1] }}</div>
+      </div>
+      {% endif %}
+      
+      <div class="info-item">
+        <div class="label">Email Address</div>
+        <div class="value">{{ user_data[2] }}</div>
+      </div>
+      
+      {% if user_data[3] %}
+      <div class="info-item">
+        <div class="label">Phone Number</div>
+        <div class="value">{{ user_data[3] }}</div>
+      </div>
+      {% else %}
+      <div class="info-item">
+        <div class="label">Phone Number</div>
+        <div class="value" style="color: #7f8c8d;">Not set</div>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Update Phone Number -->
+    <div class="edit-section">
+      <h3>📱 Update Phone Number</h3>
+      <form method="POST">
+        <input type="hidden" name="action" value="update_phone">
+        
+        <div class="form-group">
+          <label for="phone">Phone Number:</label>
+          <input type="text" id="phone" name="phone" placeholder="e.g., +1-234-567-8900" 
+                 value="{{ user_data[3] if user_data[3] else '' }}">
+        </div>
+        
+        <button type="submit">Save Phone Number</button>
+      </form>
+    </div>
+
+    <!-- Change Email -->
+    <div class="edit-section">
+      <h3>✉️ Change Email Address</h3>
+      <p style="color: #7f8c8d; font-size: 14px; margin-bottom: 15px;">
+        You will receive a verification link at your new email address. Click the link to confirm the change.
+      </p>
+      <form method="POST">
+        <input type="hidden" name="action" value="change_email">
+        
+        <div class="form-group">
+          <label for="new_email">New Email Address:</label>
+          <input type="email" id="new_email" name="new_email" placeholder="e.g., newemail@example.com" required>
+        </div>
+        
+        <button type="submit">Send Verification Link</button>
+      </form>
+    </div>
+
+    <!-- Security Information -->
+    <div class="info-card">
+      <h3>🔒 Security</h3>
+      <p style="color: #7f8c8d; margin-bottom: 15px;">
+        Your password is securely encrypted. For security reasons, you cannot change your password from this page.
+      </p>
+      <p style="color: #7f8c8d; margin-bottom: 15px;">
+        To reset your password, visit the <a href="/forgot" style="color: #667eea; font-weight: bold;">forgot password page</a>.
+      </p>
+    </div>
+  </div>
+  <script>
+    // Allow the account page toggle to reuse the same dark mode storage flag
+    document.getElementById('dark-toggle-account')?.addEventListener('click', function(){
+      const cur = document.body.classList.toggle('dark');
+      localStorage.setItem('studyplanner_dark', cur ? '1' : '0');
+      // Update topbar toggle if present
+      const top = document.getElementById('dark-toggle');
+      if(top) top.textContent = cur ? 'Light' : 'Dark';
+    });
+  </script>
+{% endblock %}

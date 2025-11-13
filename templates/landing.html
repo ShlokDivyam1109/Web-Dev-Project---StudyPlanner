@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Study Planner Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    .flash-messages {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      max-width: 400px;
+    }
+    .flash-message {
+      padding: 15px 20px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      animation: slideIn 0.3s ease-in;
+    }
+    .flash-message.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    @keyframes slideIn {
+      from { transform: translateX(400px); }
+      to { transform: translateX(0); }
+    }
+  </style>
+</head>
+<body>
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+        <div class="flash-message {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+<div style="
+  background: #f0f0f0dd;
+  padding: 5% 7%;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  width: 80vw; 
+  text-align: center;
+">
+    <img src="static/logo.png" style="height:200px; width:200px; border-radius: 12px;">
+    <h1 style="font-size: 40px;">Welcome to Study Planner</h1>
+    <p style="font-size: 20px;">The best tool to personalise your study time</p>
+    <br>
+    <div style="display: flex; justify-content: center; gap: 20px;">
+        <div class="container" > <h1 style="font-size: 60px;">⏰</h1><br><h3 style="font-size: 24px;">Plan Your Studies efficiently</h3> </div>
+        <div class="container"> <h1 style="font-size: 60px;">💪</h1><br><h3 style="font-size: 24px;">Be motivated all day long</h3> </div>
+        <div class="container"> <h1 style="font-size: 60px;">✅</h1><br><h3 style="font-size: 24px;">Easy to use design</h3> </div>
+    </div>
+    <div class="links">
+      <a href="/login"><button>Login</button></a>
+      <a href="/signup"><button>Sign Up</button></a>
+    </div>
+  </div>
+  <footer>© 2025 StudyPlanner Dashboard</footer>
+</body>
+</html>
+
