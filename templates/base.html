@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Study Planner{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+ 
   <style>
     * {
       margin: 0;
@@ -24,7 +25,7 @@
 
     /* ===== TOP BAR ===== */
     .topbar {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(to right, #22d3ee, #0d9488);
       color: white;
       padding: 15px 30px;
       display: flex;
@@ -72,6 +73,7 @@
 
     .topbar .profile-pic:hover {
       transform: scale(1.1);
+      border: 1px solid black;
     }
 
     .topbar .user-name {
@@ -97,13 +99,16 @@
 
     /* Dark mode styles */
     body.dark {
-      background-color: #0f1720;
-      color: #e6eef8;
+      background-color: #4b5160;
+      color: #e5e7eb;
     }
-    body.dark .topbar { background: linear-gradient(135deg, #111827 0%, #0b1220 100%); }
-    body.dark .sidebar { background-color: #0b1220; }
-    body.dark .content-area { background-color: #0f1720; }
-    body.dark .card, body.dark .plan-card, body.dark .info-card { background: #0b1320; color: #e6eef8; box-shadow: none; }
+    body.dark .topbar { background: background-color: #0d9488; }
+    body.dark .sidebar { background-color: #111827; }
+    body.dark .content-area { background-color: #2d3643; }
+    body.dark .card, body.dark .plan-card, body.dark .info-card { background: #2d3643; color: #e6eef8; box-shadow: none;}
+    body.dark .chart-container h3{color:#667eea;}
+    body.dark .top-tasks h3{color:#667eea;}
+    body.dark .tp {color: #c9b1bd;}
     /* global button sizing to better match text content */
     button {
       padding: 6px 12px;
