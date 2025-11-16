@@ -184,8 +184,7 @@
               <tr>
                 <th>Subject</th>
                 <th>Topic</th>
-                <th>From Date</th>
-                <th>To Date</th>
+                <th>Due Date</th>
                 <th>Weightage</th>
                 <th>Status</th>
               </tr>
@@ -195,8 +194,7 @@
               <tr>
                 <td><strong>{{ entry.subject }}</strong></td>
                 <td>{{ entry.topic }}</td>
-                <td>{{ entry.from_date }}</td>
-                <td>{{ entry.to_date }}</td>
+                <td>{{ entry.due_date }}</td>
                 <td>{{ entry.weightage }}%</td>
                 <td>
                   {% if entry.status == 'scheduled' %}

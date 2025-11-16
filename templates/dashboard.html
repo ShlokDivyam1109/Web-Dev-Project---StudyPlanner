@@ -215,7 +215,7 @@
       {% for task in top_tasks %}
       <div class="task-item">
         <strong>{{ loop.index }}. {{ task.topic }} - {{ task.subject }}</strong>
-        <br><small>Priority: High | From: {{ task.from_date }} To: {{ task.to_date }}</small>
+        <br><small>Priority: High | Due: {{ task.due_date }}</small>
         <br><p>Weightage: {{ task.weightage }}% | Status: <strong>{{ task.status }}</strong></p>
       </div>
       {% endfor %}
@@ -226,7 +226,7 @@
     </div>
     {% endif %}
     <div style="text-align: center; margin-top: 20px;">
-      <a href="/plans" style="display: inline-block; padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">View All Plans →</a>
+      <a href="/todo" style="display: inline-block; padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">View To-Do List →</a>
     </div>
   </div>
 {% endblock %}

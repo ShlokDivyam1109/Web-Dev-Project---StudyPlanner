@@ -8,6 +8,20 @@
         max-width: 900px;
       }
       
+      .section-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-top: 40px;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #667eea;
+      }
+      
+      .section-title.pending {
+        border-bottom-color: #ffc107;
+      }
+      
       .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -84,6 +98,7 @@
       .topics-list {
         display: grid;
         gap: 15px;
+        margin-bottom: 30px;
       }
       
       .topic-item {
@@ -93,7 +108,7 @@
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         display: flex;
         gap: 15px;
-        align-items: center;
+        align-items: flex-start;
         transition: all 0.3s;
         border-left: 4px solid #667eea;
       }
@@ -135,7 +150,14 @@
         font-size: 16px;
         font-weight: 600;
         color: #2c3e50;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
+      }
+      
+      .topic-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 8px;
       }
       
       .topic-subject {
@@ -146,7 +168,6 @@
         border-radius: 20px;
         font-size: 12px;
         font-weight: 600;
-        margin-right: 10px;
       }
       
       .topic-weightage {
@@ -159,10 +180,22 @@
         font-weight: 600;
       }
       
+      .topic-date {
+        display: inline-block;
+        background: #e8f4f8;
+        color: #0288d1;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      
       .topic-actions {
         display: flex;
         gap: 10px;
         flex-shrink: 0;
+        flex-wrap: wrap;
+        justify-content: flex-end;
       }
       
       .topic-actions button {
@@ -197,6 +230,9 @@
         text-align: center;
         padding: 60px 20px;
         color: #7f8c8d;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       }
       
       .empty-state .icon {
@@ -218,88 +254,154 @@
 
 {% block content %}
   <div class="page-header">
-    <h1>Today's Study Plan</h1>
-    <p>{{ today_date }} - Complete your assigned topics for today</p>
+    <h1>Study To-Do List</h1>
+    <p>{{ today_date }} - Manage your daily and pending tasks</p>
   </div>
 
   <div class="todo-container">
-    <!-- Statistics Cards -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="label">Total Topics</div>
-        <div class="number">{{ total_topics }}</div>
-      </div>
-      <div class="stat-card completed">
-        <div class="label">✅ Completed</div>
-        <div class="number">{{ completed_topics }}</div>
-      </div>
-      <div class="stat-card pending">
-        <div class="label">⏳ Pending</div>
-        <div class="number">{{ pending_topics }}</div>
-      </div>
-      <div class="stat-card skipped">
-        <div class="label">⏭️ Skipped</div>
-        <div class="number">{{ skipped_topics }}</div>
-      </div>
-    </div>
-
-    <!-- Progress Bar -->
-    {% if total_topics > 0 %}
-    <div class="progress-bar">
-      <div class="progress-fill" style="width: {{ completion_pct }}%;">
-        {{ completion_pct }}% Complete
-      </div>
-    </div>
-    {% endif %}
-
-    <!-- Topics List -->
+    <!-- TODAY'S SECTION -->
+    <div class="section-title">📅 Today's Tasks</div>
+    
     {% if today_topics %}
-    <div class="topics-list">
-      {% for topic in today_topics %}
-      <div class="topic-item {{ topic.status }}">
-        <div class="topic-info">
-          <div class="topic-name">{{ topic.topic }}</div>
-          <div>
-            <span class="topic-subject">📚 {{ topic.subject }}</span>
-            <span class="topic-weightage">Weightage: {{ topic.weightage }}%</span>
+      <!-- Statistics for Today -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="label">Today's Total</div>
+          <div class="number">{{ total_today }}</div>
+        </div>
+        <div class="stat-card completed">
+          <div class="label">✅ Completed</div>
+          <div class="number">{{ completed_today }}</div>
+        </div>
+        <div class="stat-card pending">
+          <div class="label">⏳ Pending</div>
+          <div class="number">{{ pending_today }}</div>
+        </div>
+        <div class="stat-card skipped">
+          <div class="label">⏭️ Skipped</div>
+          <div class="number">{{ skipped_today }}</div>
+        </div>
+      </div>
+
+      <!-- Progress Bar for Today -->
+      {% if total_today > 0 %}
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: {{ completion_pct_today }}%;">
+          {{ completion_pct_today }}% Complete
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Today's Topics List -->
+      <div class="topics-list">
+        {% for topic in today_topics %}
+        <div class="topic-item {{ topic.status }}">
+          <div class="topic-info">
+            <div class="topic-name">{{ topic.topic }}</div>
+            <div class="topic-meta">
+              <span class="topic-subject">📚 {{ topic.subject }}</span>
+              <span class="topic-weightage">Weightage: {{ topic.weightage }}%</span>
+              <span class="topic-date">📍 Due: {{ topic.due_date }}</span>
+            </div>
+          </div>
+          <div class="topic-actions">
+            {% if topic.status == 'completed' %}
+              <span style="color: #28a745; font-weight: bold;">✓ Done</span>
+            {% elif topic.status == 'skipped' %}
+              <span style="color: #6c757d; font-weight: bold;">- Skipped</span>
+            {% else %}
+              <form method="POST" style="display: inline;">
+                <input type="hidden" name="action" value="mark_done">
+                <input type="hidden" name="topic_id" value="{{ topic.id }}">
+                <button type="submit" class="btn-done">Mark Done</button>
+              </form>
+              <form method="POST" style="display: inline;">
+                <input type="hidden" name="action" value="skip">
+                <input type="hidden" name="topic_id" value="{{ topic.id }}">
+                <button type="submit" class="btn-skip">Skip</button>
+              </form>
+              {% if topic.plan_id %}
+              <a href="/edit_plan/{{ topic.plan_id }}" style="display:inline-block; margin-left:8px; text-decoration:none;"><button class="btn-skip" type="button">Edit Plan</button></a>
+              {% endif %}
+            {% endif %}
           </div>
         </div>
-        <div class="topic-actions">
-          {% if topic.status == 'completed' %}
-            <span style="color: #28a745; font-weight: bold;">✓ Done</span>
-          {% elif topic.status == 'skipped' %}
-            <span style="color: #6c757d; font-weight: bold;">- Skipped</span>
-          {% else %}
-            <form method="POST" style="display: inline;">
-              <input type="hidden" name="action" value="mark_done">
-              <input type="hidden" name="topic_id" value="{{ topic.id }}">
-              <button type="submit" class="btn-done">Mark Done</button>
-            </form>
-            <form method="POST" style="display: inline;">
-              <input type="hidden" name="action" value="skip">
-              <input type="hidden" name="topic_id" value="{{ topic.id }}">
-              <button type="submit" class="btn-skip">Skip</button>
-            </form>
-            {% if topic.plan_id %}
-            <a href="/edit_plan/{{ topic.plan_id }}" style="display:inline-block; margin-left:8px; text-decoration:none;"><button class="btn-skip" type="button">Edit Plan</button></a>
-            {% endif %}
-          {% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="icon">📭</div>
+        <h2>No Tasks for Today</h2>
+        <p>You don't have any topics scheduled for today.</p>
+      </div>
+    {% endif %}
+
+    <!-- PENDING SECTION -->
+    <div class="section-title pending">⏰ Pending Tasks</div>
+    
+    {% if pending_topics %}
+      <!-- Statistics for Pending -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="label">Total Pending</div>
+          <div class="number">{{ total_pending }}</div>
+        </div>
+        <div class="stat-card completed">
+          <div class="label">✅ Completed</div>
+          <div class="number">{{ completed_pending }}</div>
+        </div>
+        <div class="stat-card pending">
+          <div class="label">⚠️ Unresolved</div>
+          <div class="number">{{ total_pending - completed_pending - skipped_pending }}</div>
+        </div>
+        <div class="stat-card skipped">
+          <div class="label">⏭️ Skipped</div>
+          <div class="number">{{ skipped_pending }}</div>
         </div>
       </div>
-      {% endfor %}
-    </div>
+
+      <!-- Pending Topics List -->
+      <div class="topics-list">
+        {% for topic in pending_topics %}
+        <div class="topic-item {{ topic.status }}">
+          <div class="topic-info">
+            <div class="topic-name">{{ topic.topic }}</div>
+            <div class="topic-meta">
+              <span class="topic-subject">📚 {{ topic.subject }}</span>
+              <span class="topic-weightage">Weightage: {{ topic.weightage }}%</span>
+              <span class="topic-date">📅 Assigned: {{ topic.due_date }}</span>
+            </div>
+          </div>
+          <div class="topic-actions">
+            {% if topic.status == 'completed' %}
+              <span style="color: #28a745; font-weight: bold;">✓ Done</span>
+            {% elif topic.status == 'skipped' %}
+              <span style="color: #6c757d; font-weight: bold;">- Skipped</span>
+            {% else %}
+              <form method="POST" style="display: inline;">
+                <input type="hidden" name="action" value="mark_done">
+                <input type="hidden" name="topic_id" value="{{ topic.id }}">
+                <button type="submit" class="btn-done">Mark Done</button>
+              </form>
+              <form method="POST" style="display: inline;">
+                <input type="hidden" name="action" value="skip">
+                <input type="hidden" name="topic_id" value="{{ topic.id }}">
+                <button type="submit" class="btn-skip">Skip</button>
+              </form>
+              {% if topic.plan_id %}
+              <a href="/edit_plan/{{ topic.plan_id }}" style="display:inline-block; margin-left:8px; text-decoration:none;"><button class="btn-skip" type="button">Edit Plan</button></a>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
     {% else %}
-    <div class="empty-state">
-      <div class="icon">📭</div>
-      <h2>No Topics Assigned Today</h2>
-      <p>You don't have any topics scheduled for today.</p>
-      <p style="color: #999; font-size: 14px; margin-top: 20px;">
-        Create a study plan and generate a schedule to see your daily topics here.
-      </p>
-      <a href="/schedule" style="color: #667eea; text-decoration: none; font-weight: bold; margin-top: 20px; display: inline-block;">
-        ➜ Create Study Plan
-      </a>
-    </div>
+      <div class="empty-state">
+        <div class="icon">🎉</div>
+        <h2>No Pending Tasks</h2>
+        <p>Great! You've completed or skipped all your previous tasks.</p>
+      </div>
     {% endif %}
   </div>
 {% endblock %}

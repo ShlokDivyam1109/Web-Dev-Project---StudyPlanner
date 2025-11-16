@@ -46,12 +46,8 @@
             <div style="font-size:13px; color:#666; margin-top:6px;">Weightage: {{ entry.weightage }}%</div>
           </div>
           <div>
-            <label>From</label>
-            <input type="date" name="from_{{ entry.id }}" value="{{ entry.from_date }}">
-          </div>
-          <div>
-            <label>To</label>
-            <input type="date" name="to_{{ entry.id }}" value="{{ entry.to_date }}">
+            <label>Due Date</label>
+            <input type="date" name="date_{{ entry.id }}" value="{{ entry.due_date }}">
           </div>
           <div class="actions">
             <button type="submit" name="save_single" value="{{ entry.id }}" class="btn save small">Save</button>

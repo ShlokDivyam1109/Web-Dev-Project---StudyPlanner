@@ -64,8 +64,7 @@ def create_tables():
         topic_name VARCHAR(255) NOT NULL,
         initial_weightage FLOAT DEFAULT 0,
         normalized_weightage FLOAT DEFAULT 0,
-        from_date DATE,
-        to_date DATE,
+        due_date DATE,
         skipped_days INT DEFAULT 0,
         completed BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -73,15 +72,14 @@ def create_tables():
     ) ENGINE=InnoDB;
     ''')
 
-    # Schedule entries - generated timetable entries (subject + topic + dates + weightage)
+    # Schedule entries - generated timetable entries (subject + topic + date + weightage)
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS Study_Schedule (
         id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT NOT NULL,
         subject VARCHAR(255) NOT NULL,
         topic VARCHAR(255) NOT NULL,
-        from_date DATE NOT NULL,
-        to_date DATE NOT NULL,
+        due_date DATE NOT NULL,
         weightage FLOAT DEFAULT 0,
         normalized_weightage FLOAT DEFAULT 0,
         skipped_days INT DEFAULT 0,
