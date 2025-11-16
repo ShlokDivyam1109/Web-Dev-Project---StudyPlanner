@@ -8,19 +8,19 @@
         max-width: 1000px;
       }
       .plan-card {
-        background: white;
+        background: var(--card-bg);
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         margin-bottom: 20px;
         padding: 20px;
-        border-left: 4px solid #667eea;
+        border-left: 4px solid var(--primary);
       }
       .plan-card.submitted {
-        border-left-color: #28a745;
+        border-left-color: var(--success);
       }
       .plan-card h3 {
         margin-top: 0;
-        color: #2c3e50;
+        color: var(--text);
       }
       .plan-meta {
         display: grid;
@@ -30,7 +30,7 @@
         font-size: 14px;
       }
       .meta-item {
-        background: #f9f9f9;
+        background: var(--card-bg);
         padding: 10px 12px;
         border-radius: 6px;
         display: flex;
@@ -38,14 +38,14 @@
         align-items: center;
       }
       .meta-item .label {
-        color: #7f8c8d;
+        color: var(--muted);
         font-size: 13px;
         font-weight: 600;
         text-transform: none;
         margin-right: 12px;
       }
       .meta-item .value {
-        color: #2c3e50;
+        color: var(--text);
         font-weight: 700;
         text-align: right;
       }
@@ -58,11 +58,11 @@
         margin-top: 10px;
       }
       .status-badge.draft {
-        background: #ffc107;
+        background: var(--warning);
         color: #000;
       }
       .status-badge.submitted {
-        background: #28a745;
+        background: var(--success);
         color: white;
       }
       .subjects-list {
@@ -71,10 +71,10 @@
       .subjects-list strong {
         display: block;
         margin-bottom: 8px;
-        color: #2c3e50;
+        color: var(--text);
       }
       .subject-item {
-        background: #f0f4ff;
+        background: var(--card-bg);
         padding: 8px 12px;
         border-radius: 4px;
         margin-bottom: 5px;
@@ -82,31 +82,34 @@
       }
       .schedule-table {
         width: 100%;
-        border-collapse: collapse;
+        border: 1px solid #000;
         margin-top: 15px;
         font-size: 13px;
       }
       .schedule-table th {
-        background: #667eea;
+        background: var(--primary);
         color: white;
         padding: 10px;
         text-align: left;
+        border: 1px solid #000;
         border-radius: 4px 4px 0 0;
       }
       .schedule-table td {
         padding: 10px;
+        border: 1px solid #000;
         border-bottom: 1px solid #eee;
       }
       .schedule-table tr:last-child td {
-        border-bottom: none;
+        border: 1px solid #000;
       }
       .schedule-table tbody tr:hover {
-        background: #f9f9f9;
+        background: var(--card-bg);
+        border: 1px solid #000;
       }
       .empty-state {
         text-align: center;
         padding: 40px;
-        color: #7f8c8d;
+        color: var(--muted);
       }
       .action-btn {
         display: inline-block;
@@ -139,47 +142,49 @@
         <div style="display: flex; justify-content: space-between; align-items: start;">
           <div>
             <h3>{{ plan.name }}</h3>
-            <div class="status-badge {{ plan.status }}">
+            <div class="status-badge {{ plan.status }}">  
               {% if plan.status == 'draft' %}Draft{% else %}Submitted{% endif %}
             </div>
           </div>
-          <small style="color: #7f8c8d;">Created: {{ plan.created_at }}</small>
+          <small style="color: #7f8c8d;">Created: {{ plan.created_at|format_date }}</small>
         </div>
 
         <div class="plan-meta">
-          <div class="meta-item">
-            <div class="label">Start Date</div>
-            <div class="value">{{ plan.start_date }}</div>
+          <div class="meta-row" style="display:flex; align-items:center; margin-bottom:12px;">
+            <div class="label">Start Date:</div>
+            <div class="value">{{ plan.start_date|format_date }}</div>
           </div>
-          <div class="meta-item">
-            <div class="label">End Date</div>
-            <div class="value">{{ plan.end_date }}</div>
+
+          <div class="meta-row" style="display:flex; align-items:center; margin-bottom:12px;">
+            <div class="label">End Date:</div>
+            <div class="value">{{ plan.end_date|format_date }}</div>
           </div>
-          <div class="meta-item">
-            <div class="label">Study Days</div>
+
+          <div class="meta-row" style="display:flex; align-items:center; margin-bottom:12px;">
+            <div class="label">Study Days:</div>
             <div class="value">{{ plan.preferred_days if plan.preferred_days else 'All Days' }}</div>
           </div>
-          <div class="meta-item">
-            <div class="label">Subjects</div>
+
+          <div class="meta-row" style="display:flex; align-items:center; margin-bottom:12px;">
+            <div class="label">Subject Count:</div>
             <div class="value">{{ plan.subjects|length }}</div>
           </div>
+          <div class="meta-row" style="display:flex; align-items:center; margin-bottom:12px;">
+            <div class="label">Subjects:</div>  
+            <div class="value">
+              {% for subject in plan.subjects %}
+                {{ subject.name }}<br>
+              {% endfor %}
+              </div>
+          </div>
+          </div>
         </div>
-
-        <!-- Subjects -->
-        {% if plan.subjects %}
-        <div class="subjects-list">
-          <strong>Subjects:</strong>
-          {% for subject in plan.subjects %}
-          <div class="subject-item">{{ subject.name }}</div>
-          {% endfor %}
-        </div>
-        {% endif %}
 
         <!-- Schedule Table -->
         {% if plan.schedule %}
         <div style="margin-top: 20px;">
           <strong style="display: block; margin-bottom: 10px;">Generated Schedule:</strong>
-          <table class="schedule-table">
+          <table class="schedule-table" style="border: 1px solid black; width: 60%;">
             <thead>
               <tr>
                 <th>Subject</th>
@@ -194,13 +199,13 @@
               <tr>
                 <td><strong>{{ entry.subject }}</strong></td>
                 <td>{{ entry.topic }}</td>
-                <td>{{ entry.due_date }}</td>
+                <td>{{ entry.due_date|format_date }}</td>
                 <td>{{ entry.weightage }}%</td>
                 <td>
                   {% if entry.status == 'scheduled' %}
-                    <span style="background: #d4edda; padding: 4px 8px; border-radius: 3px; font-size: 12px;">Scheduled</span>
+                    <span class="status-badge submitted">Scheduled</span>
                   {% else %}
-                    <span style="background: #fff3cd; padding: 4px 8px; border-radius: 3px; font-size: 12px;">{{ entry.status }}</span>
+                    <span class="status-badge draft">{{ entry.status }}</span>
                   {% endif %}
                 </td>
               </tr>
@@ -219,7 +224,7 @@
       <div class="empty-state">
         <h2>No Study Plans Yet</h2>
         <p>You haven't created any study plans yet.</p>
-        <a href="/schedule" style="display: inline-block; padding: 12px 24px; background: #667eea; color: white; text-decoration: none; border-radius: 6px; margin-top: 20px; font-weight: bold;">Create Your First Plan</a>
+  <a href="/schedule" class="btn-primary" style="display: inline-block; padding: 12px 24px; margin-top: 20px; font-weight: bold;">Create Your First Plan</a>
       </div>
     {% endif %}
   </div>

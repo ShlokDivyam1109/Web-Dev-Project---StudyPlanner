@@ -3,6 +3,7 @@
 <head>
   <title>Study Planner Dashboard</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='theme.css') }}">
   <style>
     .flash-messages {
       position: fixed;
@@ -19,9 +20,9 @@
       animation: slideIn 0.3s ease-in;
     }
     .flash-message.success {
-      background-color: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
+      background-color: var(--success);
+      color: white;
+      border: 1px solid rgba(0,0,0,0.05);
     }
     @keyframes slideIn {
       from { transform: translateX(400px); }
@@ -41,10 +42,10 @@
   {% endif %}
 {% endwith %}
 <div style="
-  background: #f0f0f0dd;
+  background: var(--card-bg);
   padding: 5% 7%;
   border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  box-shadow: var(--card-shadow);
   width: 80vw; 
   text-align: center;
 ">
@@ -65,4 +66,3 @@
   <footer>© 2025 StudyPlanner Dashboard</footer>
 </body>
 </html>
-

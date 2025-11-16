@@ -85,6 +85,7 @@ def create_tables():
         skipped_days INT DEFAULT 0,
         status VARCHAR(32) DEFAULT 'scheduled',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES User_Data(id) ON DELETE CASCADE
     ) ENGINE=InnoDB;
     ''')

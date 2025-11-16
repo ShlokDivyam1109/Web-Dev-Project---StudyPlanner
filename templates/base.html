@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Study Planner{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='theme.css') }}">
  
   <style>
     * {
@@ -15,7 +16,8 @@
 
     body {
       font-family: "Poppins", Arial, sans-serif;
-      background-color: #f5f5f5;
+      background-color: var(--bg);
+      color: var(--text);
       display: flex;
       flex-direction: column;
       height: 100vh;
@@ -25,7 +27,7 @@
 
     /* ===== TOP BAR ===== */
     .topbar {
-      background: linear-gradient(to right, #22d3ee, #0d9488);
+      background: var(--topbar-gradient);
       color: white;
       padding: 15px 30px;
       display: flex;
@@ -46,7 +48,7 @@
     }
 
     .topbar .app-name span {
-      color: #ffd700;
+      color: var(--accent);
     }
 
     .topbar .profile-section {
@@ -97,18 +99,7 @@
       font-weight: 600;
     }
 
-    /* Dark mode styles */
-    body.dark {
-      background-color: #4b5160;
-      color: #e5e7eb;
-    }
-    body.dark .topbar { background: background-color: #0d9488; }
-    body.dark .sidebar { background-color: #111827; }
-    body.dark .content-area { background-color: #2d3643; }
-    body.dark .card, body.dark .plan-card, body.dark .info-card { background: #2d3643; color: #e6eef8; box-shadow: none;}
-    body.dark .chart-container h3{color:#667eea;}
-    body.dark .top-tasks h3{color:#667eea;}
-    body.dark .tp {color: #c9b1bd;}
+    /* dark-mode variables are centralized in static/theme.css and applied via .dark on body */
     /* global button sizing to better match text content */
     button {
       padding: 6px 12px;
@@ -198,7 +189,7 @@
       flex: 1;
       overflow-y: auto;
       padding: 30px;
-      background-color: #f5f5f5;
+      background-color: var(--bg);
     }
 
     .content-area::-webkit-scrollbar {
@@ -266,21 +257,21 @@
     }
 
     .page-header h1 {
-      color: #2c3e50;
+      color: var(--text);
       font-size: 32px;
       margin-bottom: 10px;
     }
 
     .page-header p {
-      color: #7f8c8d;
+      color: var(--muted);
       font-size: 14px;
     }
 
     .card {
-      background: white;
+      background: var(--card-bg);
       border-radius: 8px;
       padding: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--card-shadow);
       margin-bottom: 20px;
     }
     

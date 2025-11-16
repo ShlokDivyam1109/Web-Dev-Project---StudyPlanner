@@ -1,0 +1,96 @@
+/* Centralized theme variables for Light/Dark modes
+   Add new tokens here to keep palettes consistent across templates and inline styles.
+*/
+:root {
+  --bg: #f5f5f5;
+  --card-bg: #ffffff;
+  --text: #30502c;
+  --muted: #7f8c8d;
+  --primary: #87ea66;
+  --primary-2: #1d2ba9;
+  --primary-gradient: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
+  --topbar-gradient: linear-gradient(to right, #22d3ee, #0d9488);
+  --accent: #ffd700;
+  --success: #28a745;
+  --warning: #ffc107;
+  --danger: #e74c3c;
+  --sidebar-bg: #1f2441;
+  --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Dark theme overrides */
+body.dark {
+  --bg: #0b0f12;
+  --card-bg: #11171c;
+  --text: #e6eef8;
+  --muted: #99a3b3;
+  --primary: #667eea;
+  --primary-2: #764ba2;
+  --primary-gradient: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
+  --topbar-gradient: linear-gradient(to right, #0f1724, #0d9488);
+  --accent: #ffd700;
+  --sidebar-bg: #11171c;
+  --card-shadow: none;
+}
+
+/* Global elements that use the tokens */
+body {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+.topbar {
+  background: var(--topbar-gradient) !important;
+  color: white !important;
+}
+
+.sidebar {
+  background: var(--sidebar-bg) !important;
+  color: white !important;
+}
+
+.content-area, .main-content {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+.card, .plan-card, .info-card, .stat-card, .task-item {
+  background: var(--card-bg) !important;
+  color: var(--text) !important;
+  box-shadow: var(--card-shadow);
+}
+
+.tp, .muted {
+  color: var(--muted) !important;
+}
+
+.btn-primary, .action-btn {
+  background: var(--primary-gradient) !important;
+  color: white !important;
+  text-decoration: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  display: inline-block;
+  border: none;
+}
+
+.btn-success { background: var(--success); color: white; }
+.btn-warning { background: var(--warning); color: black; }
+.btn-danger { background: var(--danger); color: white; }
+
+.progress-track { background: rgba(255,255,255,0.06); border-radius: 18px; overflow: hidden; }
+.progress-fill { background: var(--primary-gradient); height: 100%; }
+
+/* small utility tweaks */
+.card .muted { color: var(--muted); }
+
+/* make links accent-aware */
+a, a:link, a:visited { color: var(--primary); }
+a.btn-primary:hover { filter: brightness(0.95); }
+
+/* ensure buttons in topbar look right */
+.dark-toggle { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.08); color: #fff; padding: 6px 10px; border-radius: 6px; margin-right: 12px; cursor: pointer; font-weight: 600; }
+
+/* Default scrollbar tweaks (light/dark aware via variables) */
+.content-area::-webkit-scrollbar-thumb { background: var(--primary); }
+
