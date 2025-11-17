@@ -332,11 +332,20 @@ python3 test_api.py
 
 This project is open source and available under the MIT License.
 
-## Author
+## Authors
 
-**Shlok Divyam**
+**Shlok Divyam**  
 - GitHub: [@ShlokDivyam1109](https://github.com/ShlokDivyam1109)
-- Repository: [Web-Dev-Project---StudyPlanner](https://github.com/ShlokDivyam1109/Web-Dev-Project---StudyPlanner)
+
+**Kumkum Sharma**  
+- GitHub: [@kumkum19122004](https://github.com/kumkum19122004)
+
+**Ashish Raikwar**  
+- GitHub: [@araikwar745](https://github.com/araikwar745)
+
+### Repository
+[Web-Dev-Project---StudyPlanner](https://github.com/ShlokDivyam1109/Web-Dev-Project---StudyPlanner)
+
 
 ## Support
 
