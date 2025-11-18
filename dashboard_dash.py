@@ -4,6 +4,7 @@ import plotly.graph_objs as go
 import pandas as pd
 import flask
 from datetime import datetime, timedelta
+import numpy as np
 
 def init_dashboard(server, mydb, get_user_id_func):
     """Initialize and mount a Dash app onto the given Flask `server`.
@@ -66,7 +67,7 @@ def init_dashboard(server, mydb, get_user_id_func):
                     html.H3("Top 2 Most Important Tasks Today", style={"marginBottom": "1em"}),
                     html.Div(id='top-tasks-list'),
                     html.A("Go to To-Do List →", href="/todo", className='btn-primary', style={"display": "inline-block", "marginTop": "18px", "padding": "10px 24px", "textDecoration": "none", "borderRadius": "6px", "fontWeight": "bold"})
-                ], style={"background": "linear-gradient(to right, #0fff0f, #000f00)", "padding": "24px", "borderRadius": "8px", "boxShadow": "0 2px 8px rgba(0,0,0,0.1)", "marginBottom": "2em"}),
+                ], style={"background": "linear-gradient(to right, #0fff0f, #000f00)", "padding": "24px", "borderRadius": "8px", "boxShadow": "0 2px 8px rgba(0,0,0,0.1)", "marginBottom": "2em","color":"black"}),
 
                 # Footer message
                 html.Div("Keep hustling! 🚀", style={"textAlign": "center", "color": "var(--muted)", "marginTop": "2em", "fontSize": "18px"})
@@ -211,21 +212,81 @@ def init_dashboard(server, mydb, get_user_id_func):
         greeting = f"Welcome, {user_email.split('@')[0].capitalize()}!"
         motivation = "\u201CThe secret of getting ahead is getting started.\u201D – Mark Twain"
 
-    # --- Completion bar over last 7 days (dates on X axis, % on Y axis, stacked bars) ---
+        # --- Completion bar over last 7 days (dates on X axis, % on Y axis, stacked bars) ---
         today = datetime.now().date()
-        cursor = mydb.cursor()
         start = today - timedelta(days=6)
-        cursor.execute(
-            "SELECT day_date, total_tasks, completed_tasks, pending_from_previous FROM Daily_Progress WHERE user_id = %s AND day_date BETWEEN %s AND %s ORDER BY day_date",
-            (user_id, start, today)
-        )
+        cursor = mydb.cursor()
+
+        # Fetch tasks for last 7 days for this user
+        cursor.execute("""
+            WITH RECURSIVE last7days AS (
+                SELECT %s AS day
+                UNION ALL
+                SELECT DATE_ADD(day, INTERVAL 1 DAY)
+                FROM last7days
+                WHERE DATE_ADD(day, INTERVAL 1 DAY) <= %s
+            )
+            SELECT 
+                d.day AS day_date,
+
+                -- Tasks assigned ON that day
+                SUM(CASE WHEN s.due_date = d.day THEN 1 ELSE 0 END) AS assigned_today,
+
+                -- Tasks completed ON that same day
+                SUM(CASE 
+                    WHEN s.due_date = d.day 
+                    AND DATE(s.completed_at) = d.day
+                    THEN 1 ELSE 0 END) AS completed_today,
+
+                -- Tasks previously pending (due before day) and completed today
+                SUM(CASE 
+                    WHEN s.due_date < d.day
+                    AND DATE(s.completed_at) = d.day
+                    THEN 1 ELSE 0 END) AS pending_completed_today,
+
+                -- Total previously pending tasks (backlog)
+                SUM(CASE 
+                    WHEN s.due_date < d.day THEN 1 ELSE 0 END) AS pending_before_today
+
+            FROM last7days d
+            LEFT JOIN Study_Schedule s ON s.user_id = %s
+            GROUP BY d.day
+            ORDER BY d.day;
+        """, (start, today, user_id))
+
         rows = cursor.fetchall()
         if rows:
-            df_days = pd.DataFrame(rows, columns=['day_date', 'total', 'completed', 'pending'])
+            print("Entries found", rows)
+
+            df_days = pd.DataFrame(rows, columns=[
+                'day_date',
+                'assigned_today',
+                'completed_today',
+                'pending_before_today',
+                'pending_completed_today'
+            ])
+
+            # Convert Decimal → float
+            df_days = df_days.astype({
+                'assigned_today': float,
+                'completed_today': float,
+                'pending_before_today': float,
+                'pending_completed_today': float
+            })
+
             df_days['day_date'] = pd.to_datetime(df_days['day_date']).dt.date
-            df_days['completed_pct'] = (df_days['completed'] / df_days['total']).fillna(0) * 100
-            df_days['pending_pct'] = (df_days['pending'] / df_days['total']).fillna(0) * 100
+
+            # Completed % = completed on that day / assigned on that day
+            df_days['completed_pct'] = (
+                df_days['completed_today'] / df_days['assigned_today']
+            ).replace([np.inf, np.nan], 0) * 100
+
+            # Pending % = previously pending tasks cleared today / total previously pending tasks
+            df_days['pending_pct'] = (
+                df_days['pending_completed_today'] / df_days['pending_before_today']
+            ).replace([np.inf, np.nan], 0) * 100
         else:
+            print("No entries found")
             dates = [start + timedelta(days=i) for i in range(7)]
             df_days = pd.DataFrame({'day_date': dates, 'total': 0, 'completed': 0, 'pending': 0})
             df_days['completed_pct'] = 0
@@ -263,7 +324,7 @@ def init_dashboard(server, mydb, get_user_id_func):
             title='Completion % by Date (last 7 days)',
             xaxis_title='Date',
             yaxis_title='Percentage',
-            yaxis=dict(range=[0, 100], color=font_color),
+            yaxis=dict(range=[0, 200], color=font_color),
             xaxis=dict(color=font_color),
             margin=dict(l=60, r=30, t=60, b=60),
             plot_bgcolor=plot_bg,

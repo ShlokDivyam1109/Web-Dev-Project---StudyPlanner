@@ -80,12 +80,12 @@ def create_tables():
         subject VARCHAR(255) NOT NULL,
         topic VARCHAR(255) NOT NULL,
         due_date DATE NOT NULL,
+        completed_at TIMESTAMP NULL,
         weightage FLOAT DEFAULT 0,
         normalized_weightage FLOAT DEFAULT 0,
         skipped_days INT DEFAULT 0,
         status VARCHAR(32) DEFAULT 'scheduled',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES User_Data(id) ON DELETE CASCADE
     ) ENGINE=InnoDB;
     ''')
