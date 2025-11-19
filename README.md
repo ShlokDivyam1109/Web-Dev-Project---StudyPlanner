@@ -93,15 +93,9 @@ pip install -r requirements.txt
 ```
 
 4. **Configure Database**
-Edit `db_config.py` and set your MySQL credentials:
-```python
-mydb = mysql.connector.connect(
-    host="localhost",
-    user="your_username",
-    passwd="your_password",
-    db="User_Logins"
-)
-```
+Database credentials are now loaded from environment variables. Either:
+- Set them in your `.env` file (see step 6), OR
+- Edit `db_config.py` if you prefer hardcoding (not recommended)
 
 5. **Initialize Database**
 ```bash
@@ -116,22 +110,37 @@ Set the following environment variables before running the app:
 export SENDGRID_API_KEY='your_sendgrid_api_key'
 export MAIL_SENDER='your_email@example.com'
 export GEMINI_API_KEY='your_gemini_api_key'
-export FLASK_SECRET_KEY='your_secret_key'
+export SECRET_KEY='your_secret_key'
+export DB_PASSWORD='your_db_password'
 ```
 
-Or create a `.env` file in the project root:
+Or create a `.env` file in the project root (recommended):
 ```
+# Database Configuration
+DB_HOST=127.0.0.1
+DB_USER=flaskuser
+DB_PASSWORD=your_db_password
+DB_NAME=User_Logins
+
+# Flask Configuration
+SECRET_KEY=your_secret_key
+
+# SendGrid Email Configuration
 SENDGRID_API_KEY=your_sendgrid_api_key
 MAIL_SENDER=your_email@example.com
+
+# Gemini API Configuration
 GEMINI_API_KEY=your_gemini_api_key
-FLASK_SECRET_KEY=your_secret_key
 ```
 
-**Important**: `MAIL_PASSWORD` and `MAIL_DEFAULT_SENDER` in `app.py` use these environment variables:
-- `MAIL_PASSWORD` uses `SENDGRID_API_KEY` environment variable
-- `MAIL_DEFAULT_SENDER` uses `MAIL_SENDER` environment variable
+**Important**: All sensitive configuration now uses environment variables:
+- `SECRET_KEY` - Flask session encryption
+- `SENDGRID_API_KEY` - SendGrid email API
+- `MAIL_SENDER` - Email sender address
+- `GEMINI_API_KEY` - Google Gemini AI API
+- `DB_PASSWORD` - MySQL database password
 
-If these environment variables are not set, the app will use fallback values (not recommended for production).
+**Security Note**: Never commit your `.env` file to version control. It's already in `.gitignore`.
 
 7. **Run the Application**
 ```bash

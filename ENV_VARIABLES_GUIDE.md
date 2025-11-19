@@ -29,7 +29,7 @@ export GEMINI_API_KEY='your_gemini_api_key_here'
 
 ### Flask Session Encryption
 ```bash
-export FLASK_SECRET_KEY='your_secret_key_here'
+export SECRET_KEY='your_secret_key_here'
 ```
 
 **What it does:**
@@ -46,7 +46,7 @@ export FLASK_SECRET_KEY='your_secret_key_here'
 export SENDGRID_API_KEY='your_api_key'
 export MAIL_SENDER='your_email@gmail.com'
 export GEMINI_API_KEY='your_api_key'
-export FLASK_SECRET_KEY='your_secret_key'
+export SECRET_KEY='your_secret_key'
 
 # Then run your app
 python3 app.py
@@ -59,7 +59,13 @@ python3 app.py
 SENDGRID_API_KEY=your_sendgrid_api_key_here
 MAIL_SENDER=your_email@example.com
 GEMINI_API_KEY=your_gemini_api_key_here
-FLASK_SECRET_KEY=your_secret_key_here
+SECRET_KEY=your_secret_key_here
+
+# Database Configuration (if using .env instead of db_config.py)
+DB_HOST=127.0.0.1
+DB_USER=flaskuser
+DB_PASSWORD=your_db_password_here
+DB_NAME=User_Logins
 ```
 
 3. Install python-dotenv:
@@ -80,7 +86,7 @@ Create `run.bat`:
 set SENDGRID_API_KEY=your_api_key
 set MAIL_SENDER=your_email@gmail.com
 set GEMINI_API_KEY=your_api_key
-set FLASK_SECRET_KEY=your_secret_key
+set SECRET_KEY=your_secret_key
 python app.py
 ```
 
@@ -139,10 +145,14 @@ Run this Python command to verify variables are set:
 
 ```python
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 print("SENDGRID_API_KEY:", os.getenv('SENDGRID_API_KEY', 'NOT SET'))
 print("MAIL_SENDER:", os.getenv('MAIL_SENDER', 'NOT SET'))
 print("GEMINI_API_KEY:", os.getenv('GEMINI_API_KEY', 'NOT SET'))
-print("FLASK_SECRET_KEY:", os.getenv('FLASK_SECRET_KEY', 'NOT SET'))
+print("SECRET_KEY:", os.getenv('SECRET_KEY', 'NOT SET'))
+print("DB_PASSWORD:", '***' if os.getenv('DB_PASSWORD') else 'NOT SET')
 ```
 
 All should show your actual values, not "NOT SET".
@@ -162,7 +172,7 @@ All should show your actual values, not "NOT SET".
 - Review API response in app logs
 
 ### Login sessions not persisting?
-- Ensure FLASK_SECRET_KEY is set
+- Ensure SECRET_KEY is set
 - Key must be consistent across restarts
 - Browser must have cookies enabled
 

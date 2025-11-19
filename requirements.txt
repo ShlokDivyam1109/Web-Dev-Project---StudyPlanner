@@ -10,3 +10,4 @@ requests==2.31.0
 bcrypt==4.1.1
 Werkzeug==3.0.1
 click==8.1.7
+python-dotenv==1.0.0
