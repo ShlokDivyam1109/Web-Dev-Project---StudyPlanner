@@ -40,7 +40,7 @@ def configure_mail(app):
         MAIL_USE_TLS=True,
         MAIL_USE_SSL=False,
         MAIL_USERNAME='apikey',
-        MAIL_PASSWORD=os.getenv('SENDGRID_API_KEY', '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'),
+        MAIL_PASSWORD=os.getenv('SENDGRID_API_KEY', 'key'),
         MAIL_DEFAULT_SENDER=os.getenv('MAIL_SENDER', 'shlok.divyam@gmail.com')
     )
     mail.init_app(app)
@@ -518,7 +518,7 @@ def generate_schedule():
     """
     
     # Call Gemini API
-    api_key = os.getenv('GEMINI_API_KEY', 'AIzaSyDMcEA1fkvZ-x8AoI0HTGpKBR2pt-BXu6M')
+    api_key = os.getenv('GEMINI_API_KEY', 'key')
     api_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
     
     headers = {
@@ -1003,6 +1003,10 @@ def todo():
                 "UPDATE Study_Schedule SET status = 'completed' WHERE id = %s AND user_id = %s",
                 (topic_id, user_id)
             )
+            cursor.execute(
+                "UPDATE Study_Schedule SET completed_at= %s WHERE id = %s AND user_id = %s",
+                (datetime.now().date(),topic_id,user_id)
+            )            
         elif action == 'skip':
             cursor.execute(
                 "UPDATE Study_Schedule SET status = 'skipped' WHERE id = %s AND user_id = %s",

@@ -219,52 +219,50 @@ def init_dashboard(server, mydb, get_user_id_func):
 
         # Fetch tasks for last 7 days for this user
         cursor.execute("""
-            WITH RECURSIVE last7days AS (
-                SELECT %s AS day
-                UNION ALL
-                SELECT DATE_ADD(day, INTERVAL 1 DAY)
-                FROM last7days
-                WHERE DATE_ADD(day, INTERVAL 1 DAY) <= %s
-            )
-            SELECT 
-                d.day AS day_date,
+    WITH RECURSIVE last7days AS (
+        SELECT %s AS day
+        UNION ALL
+        SELECT DATE_ADD(day, INTERVAL 1 DAY)
+        FROM last7days
+        WHERE DATE_ADD(day, INTERVAL 1 DAY) <= %s
+    )
+    SELECT 
+        d.day AS day_date,
 
-                -- Tasks assigned ON that day
-                SUM(CASE WHEN s.due_date = d.day THEN 1 ELSE 0 END) AS assigned_today,
+        -- Tasks assigned ON that day
+        SUM(CASE 
+            WHEN s.due_date = d.day 
+            THEN 1 ELSE 0 END) AS assigned_today,
 
-                -- Tasks completed ON that same day
-                SUM(CASE 
-                    WHEN s.due_date = d.day 
-                    AND DATE(s.completed_at) = d.day
-                    THEN 1 ELSE 0 END) AS completed_today,
+        -- Tasks completed ON that same day (on-time completion)
+        SUM(CASE 
+            WHEN s.due_date = d.day 
+            AND DATE(s.completed_at) = d.day 
+            THEN 1 ELSE 0 END) AS completed_today,
 
-                -- Tasks previously pending (due before day) and completed today
-                SUM(CASE 
-                    WHEN s.due_date < d.day
-                    AND DATE(s.completed_at) = d.day
-                    THEN 1 ELSE 0 END) AS pending_completed_today,
+        -- TRUE pending tasks present at the START of the day
+        SUM(CASE 
+            WHEN s.due_date < d.day
+             AND (s.status != 'completed' OR s.completed_at >= d.day)
+            THEN 1 ELSE 0 END) AS pending_before_today,
 
-                -- Total previously pending tasks (backlog)
-                SUM(CASE 
-                    WHEN s.due_date < d.day THEN 1 ELSE 0 END) AS pending_before_today
+        -- TRUE pending tasks completed TODAY
+        SUM(CASE 
+            WHEN s.due_date < d.day
+             AND DATE(s.completed_at) = d.day
+            THEN 1 ELSE 0 END) AS pending_completed_today
 
-            FROM last7days d
-            LEFT JOIN Study_Schedule s ON s.user_id = %s
-            GROUP BY d.day
-            ORDER BY d.day;
-        """, (start, today, user_id))
+    FROM last7days d
+    LEFT JOIN Study_Schedule s 
+           ON s.user_id = %s
+    GROUP BY d.day
+    ORDER BY d.day;
+""", (start, today, user_id))
 
         rows = cursor.fetchall()
         if rows:
             print("Entries found", rows)
-
-            df_days = pd.DataFrame(rows, columns=[
-                'day_date',
-                'assigned_today',
-                'completed_today',
-                'pending_before_today',
-                'pending_completed_today'
-            ])
+            df_days = pd.DataFrame(rows, columns=['day_date','assigned_today','completed_today','pending_before_today', 'pending_completed_today'])
 
             # Convert Decimal → float
             df_days = df_days.astype({
