@@ -51,6 +51,7 @@
           </div>
           <div class="actions">
             <button type="submit" name="save_single" value="{{ entry.id }}" class="btn save small">Save</button>
+            <button type="submit" name="delete_single" value="{{ entry.id }}" class="btn secondary small" style="background:#e74c3c;color:white;">Delete</button>
           </div>
         </div>
         {% endfor %}
@@ -59,6 +60,14 @@
       <div style="margin-top:16px; text-align:right;">
         <button type="submit" class="btn save">Save All Changes</button>
       </div>
+      <form action="/delete_plan/{{ plan.id }}" method="POST" style="margin-bottom:20px;">
+      <button type="submit"
+              onclick="return confirm('Delete this entire plan and all study schedule?')"
+              style="background:#e74c3c;color:white;padding:8px 14px;border:none;border-radius:6px;font-weight:700;cursor:pointer;">
+        Delete This Plan
+      </button>
+    </form>
+
     </form>
   </div>
 {% endblock %}
